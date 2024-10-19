@@ -1,5 +1,6 @@
 import { muiColor } from "@helpers/styles";
 import { Button, Grid2, Typography } from "@mui/material";
+import { scrollToDynamicView } from "@utils/behaviour";
 import Image from "next/image";
 
 const HeroBg = () => {
@@ -13,7 +14,7 @@ const HeroBg = () => {
                     All the Pokémon data you`ll ever need in one place!
                 </Typography>
                 <Typography
-                    variant="h5"
+                    variant="h6"
                     sx={{ color: muiColor(500).grey, margin: "2rem 0" }}
                 >
                     Thousands of data compiled into one place
@@ -26,6 +27,7 @@ const HeroBg = () => {
                         borderRadius: "0.5rem",
                         padding: "0.7rem 2rem",
                     }}
+                    onClick={() => scrollToDynamicView("pokedex")}
                 >
                     Check PokèDex
                 </Button>

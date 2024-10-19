@@ -52,13 +52,17 @@ export default function RootLayout({
                             width={167}
                             height={59}
                             alt="Poke-Rey"
-                            style={{ marginRight: "1rem" }}
+                            css={css`
+                                cursor: pointer;
+                            `}
+                            onClick={() => route.push("/")}
                         />
                         <Box
                             sx={{
                                 flexGrow: 1,
                                 display: "flex",
-                                marginLeft: "1rem",
+                                marginLeft: "3rem",
+                                gap: "2rem",
                             }}
                         >
                             {pages.map((page, idx) => (
@@ -70,15 +74,18 @@ export default function RootLayout({
                                         color:
                                             route.asPath === page.route
                                                 ? muiColor(600).amber
-                                                : "black",
+                                                : muiColor(500).grey,
                                         display: "block",
-                                        fontWeight: "bold",
+                                        fontWeight:
+                                            route.asPath === page.route
+                                                ? "bold"
+                                                : "normal",
                                         borderBottom:
                                             route.asPath === page.route
                                                 ? `1px solid ${
                                                       muiColor(600).amber
                                                   }`
-                                                : "black",
+                                                : muiColor(500).grey,
                                         textTransform: "capitalize",
                                     }}
                                 >

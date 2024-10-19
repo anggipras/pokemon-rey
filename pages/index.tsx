@@ -21,6 +21,9 @@ import {
 import { Check } from "@mui/icons-material";
 import { ROUTES_PATH } from "@constants/config";
 import HeroBg from "@components/modules/hero-bg";
+import PokeCard from "@components/modules/card";
+import { muiColor } from "@helpers/styles";
+import { css } from "@emotion/react";
 
 const Index = () => {
     const { t } = useTranslation();
@@ -148,6 +151,49 @@ const Index = () => {
                     </Grid2>
                 </Box> */}
             </Container>
+            <div
+                id="pokedex"
+                css={css`
+                    background-color: ${muiColor(300).amber};
+                    padding: 5rem 0;
+                `}
+            >
+                <Container maxWidth="lg">
+                    <Container
+                        sx={{ textAlign: "center", marginBottom: "5rem" }}
+                    >
+                        <Typography
+                            variant="h3"
+                            sx={{
+                                color: muiColor(800).grey,
+                                fontWeight: "bold",
+                            }}
+                        >
+                            PokèDex
+                        </Typography>
+                        <Typography
+                            variant="h5"
+                            sx={{
+                                color: muiColor(800).grey,
+                                marginTop: "2rem",
+                            }}
+                        >
+                            All Generation totaling <br /> 999999 Pokemon
+                        </Typography>
+                    </Container>
+                    <div
+                        css={css`
+                            display: grid;
+                            grid-template-columns: repeat(3, minmax(0, 1fr));
+                            gap: 2rem 3rem;
+                        `}
+                    >
+                        {[1, 2, 3, 4].map((dt) => (
+                            <PokeCard key={dt} />
+                        ))}
+                    </div>
+                </Container>
+            </div>
         </>
     );
 };
