@@ -41,7 +41,7 @@ const Index: FC = () => {
     return (
         <>
             <Head>
-                <title>REY - Project Test</title>
+                <title>REY - Project Test Fork</title>
             </Head>
             <Container maxWidth="xl">
                 <Box component="div" m={10}>
