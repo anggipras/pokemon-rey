@@ -11,17 +11,18 @@ import {
     CardActions,
     CardContent,
     Container,
-    Grid,
+    Grid2,
     List,
     ListItem,
     ListItemIcon,
     ListItemText,
     Typography,
-} from "@material-ui/core";
-import { Check } from "@material-ui/icons";
+} from "@mui/material";
+import { Check } from "@mui/icons-material";
 import { ROUTES_PATH } from "@constants/config";
+import HeroBg from "@components/modules/hero-bg";
 
-const Index: FC = () => {
+const Index = () => {
     const { t } = useTranslation();
     const route = useRouter();
     const { locale } = route;
@@ -41,12 +42,13 @@ const Index: FC = () => {
     return (
         <>
             <Head>
-                <title>REY - Project Test Fork</title>
+                <title>REY - Project Test</title>
             </Head>
-            <Container maxWidth="xl">
-                <Box component="div" m={10}>
-                    <Grid container>
-                        <Grid container justifyContent="center" item xs={12}>
+            <Container maxWidth="lg">
+                <HeroBg />
+                {/* <Box component="div" m={10}>
+                    <Grid2 container>
+                        <Grid2 size={12}>
                             <Typography
                                 align="center"
                                 variant="h4"
@@ -54,8 +56,8 @@ const Index: FC = () => {
                             >
                                 {t("home:welcome-title")}
                             </Typography>
-                        </Grid>
-                        <Grid container justifyContent="center" item xs={12}>
+                        </Grid2>
+                        <Grid2 size={12}>
                             <Box component="div" m={2}>
                                 <Container maxWidth="sm">
                                     <Typography variant="body1" component="p">
@@ -135,16 +137,16 @@ const Index: FC = () => {
                                     </Card>
                                 </Container>
                             </Box>
-                        </Grid>
-                        <Grid container justifyContent="center" item xs={12}>
+                        </Grid2>
+                        <Grid2 size={12}>
                             <Box component="div" m={5}>
                                 <Typography variant="h4" component="h3">
                                     {t("home:welcome-work")}
                                 </Typography>
                             </Box>
-                        </Grid>
-                    </Grid>
-                </Box>
+                        </Grid2>
+                    </Grid2>
+                </Box> */}
             </Container>
         </>
     );

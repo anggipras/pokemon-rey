@@ -1,12 +1,13 @@
-import React from "react";
 import { AppProps } from "next/app";
-
+import Layout from "@components/modules/layout/navbar";
 import "@styles/global.css";
 import "@styles/vars.css";
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
     return (
-        <Component {...pageProps} />
+        <Layout>
+            <Component {...pageProps} />
+        </Layout>
     );
 }
 

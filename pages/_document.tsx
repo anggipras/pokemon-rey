@@ -1,21 +1,56 @@
-import React from "react";
-import Document, { Html, Head, Main, NextScript } from "next/document";
-import { ServerStyleSheets } from "@material-ui/core/styles";
-import { extractCritical } from "emotion-server";
+import Document, {
+    Html,
+    Head,
+    Main,
+    NextScript,
+    DocumentContext,
+    DocumentInitialProps,
+} from "next/document";
+import { CacheProvider } from "@emotion/react";
+import createEmotionServer from "@emotion/server/create-instance";
+import createCache from "@emotion/cache";
+
+const key = "custom";
+const cache = createCache({ key });
+const { extractCritical } = createEmotionServer(cache);
 
 export default class MyDocument extends Document {
-    render(): JSX.Element {
+    static async getInitialProps(
+        ctx: DocumentContext,
+    ): Promise<DocumentInitialProps> {
+        const originalRenderPage = ctx.renderPage;
+
+        ctx.renderPage = () =>
+            originalRenderPage({
+                enhanceApp: (App) => (props) =>
+                    (
+                        <CacheProvider value={cache}>
+                            <App {...props} />
+                        </CacheProvider>
+                    ),
+                enhanceComponent: (Component) => Component,
+            });
+
+        const initialProps = await Document.getInitialProps(ctx);
+        const styles = extractCritical(initialProps.html);
+        return {
+            ...initialProps,
+            styles: (
+                <>
+                    {initialProps.styles}
+                    <style
+                        data-emotion={`${key} ${styles.ids.join(" ")}`}
+                        dangerouslySetInnerHTML={{ __html: styles.css }}
+                    />
+                </>
+            ),
+        };
+    }
+
+    render() {
         return (
             <Html>
-                <Head>
-                    <style
-                        // @ts-ignore
-                        data-emotion-css={this.props.ids.join(" ")}
-                        // @ts-ignore
-                        dangerouslySetInnerHTML={{ __html: this.props.css }}
-                    />
-                </Head>
-
+                <Head />
                 <body>
                     <Main />
                     <NextScript />
@@ -24,27 +59,3 @@ export default class MyDocument extends Document {
         );
     }
 }
-
-MyDocument.getInitialProps = async (ctx) => {
-    const sheets = new ServerStyleSheets();
-    const originalRenderPage = ctx.renderPage;
-
-    ctx.renderPage = () =>
-        originalRenderPage({
-            enhanceApp: (App) => (props) => sheets.collect(<App {...props} />),
-        });
-
-    const initialProps = await Document.getInitialProps(ctx);
-    const page = await ctx.renderPage();
-    const styles = extractCritical(page.html);
-
-    return {
-        ...initialProps,
-        styles: [
-            ...React.Children.toArray(initialProps.styles),
-            sheets.getStyleElement(),
-        ],
-        ...page,
-        ...styles,
-    };
-};
