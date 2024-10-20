@@ -1,6 +1,7 @@
+import { primaryButton } from "@components/emotion-components";
 import { muiColor } from "@helpers/styles";
 import { Button, Grid2, Typography } from "@mui/material";
-import { scrollToDynamicView } from "@utils/behaviour";
+import { scrollToDynamicView } from "@utils/browser-behaviour";
 import Image from "next/image";
 
 const HeroBg = () => {
@@ -21,12 +22,7 @@ const HeroBg = () => {
                 </Typography>
                 <Button
                     variant="contained"
-                    sx={{
-                        backgroundColor: muiColor(600).amber,
-                        boxShadow: "none",
-                        borderRadius: "0.5rem",
-                        padding: "0.7rem 2rem",
-                    }}
+                    css={primaryButton}
                     onClick={() => scrollToDynamicView("pokedex")}
                 >
                     Check PokèDex
