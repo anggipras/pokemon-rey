@@ -1,38 +1,61 @@
+import useTranslation from "next-translate/useTranslation";
 import { EmotionGrid } from "@components/emotion-components";
 import CardDetail from "@components/modules/card-detail";
 import { muiColor } from "@helpers/styles";
 import { Container, Typography } from "@mui/material";
 import baseApi from "@utils/api";
 import { GetStaticPaths, GetStaticProps } from "next";
-import useTranslation from "next-translate/useTranslation";
 import Head from "next/head";
 import Image from "next/image";
 import {
+    Ability,
     FrontDefaultSprite,
     PokemonType,
     PokeTypeColor,
+    Species,
+    Sprites,
+    TypePoke,
 } from "src/types/pokemon";
 import { css } from "@emotion/react";
-import { splitPokeUrl } from "@utils/custom-function";
+import { capitalizeFirstLetter, splitPokeUrl } from "@utils/custom-function";
 import Icon from "@constants/icons";
 import { Chain, PokemonEvolution } from "src/types/evolution";
+import { useRouter } from "next/router";
+import { ROUTES_PATH } from "@constants/config";
+import { dataFilter } from "src/types/data-filter";
+
+interface UsedPokeDetail {
+    abilities: Ability[];
+    height: number;
+    id: number;
+    name: string;
+    species: Species;
+    sprites: Sprites;
+    types: TypePoke[];
+    weight: number;
+}
 
 const PokemonDetail = ({
     detailPoke,
     speciesEvoPoke,
+    pokeId,
 }: {
     detailPoke: PokemonType;
-    speciesEvoPoke: PokemonType[];
+    speciesEvoPoke: UsedPokeDetail[];
+    pokeId: string[];
 }) => {
     const { t } = useTranslation();
+    const router = useRouter();
 
     return (
         <>
             <Head>
-                <title>{detailPoke.name} - Pokemon</title>
+                <title>
+                    {capitalizeFirstLetter(detailPoke.name)} - Pokemon
+                </title>
             </Head>
             <Container maxWidth="lg">
-                <CardDetail data={detailPoke} />
+                <CardDetail data={detailPoke} typeBtn />
                 <Typography
                     variant="h6"
                     sx={{
@@ -41,7 +64,7 @@ const PokemonDetail = ({
                         marginBottom: "2rem",
                     }}
                 >
-                    Other Images :
+                    {t("common:poke-detail.img")} :
                 </Typography>
                 <EmotionGrid gridCol={6}>
                     {Object.values(detailPoke.sprites.other).map(
@@ -66,7 +89,7 @@ const PokemonDetail = ({
                             marginBottom: "2rem",
                         }}
                     >
-                        Stats :
+                        {t("common:poke-detail.stat")} :
                     </Typography>
                     <EmotionGrid gridCol={6} style={{ alignItems: "stretch" }}>
                         {detailPoke.stats.map((dt) => (
@@ -124,7 +147,7 @@ const PokemonDetail = ({
                             marginBottom: "2rem",
                         }}
                     >
-                        Evolution :
+                        {t("common:poke-detail.evo")} :
                     </Typography>
                     <div
                         css={css`
@@ -143,7 +166,15 @@ const PokemonDetail = ({
                                         align-items: center;
                                         flex-direction: column;
                                         text-align: center;
+                                        cursor: pointer;
                                     `}
+                                    onClick={() =>
+                                        router.push(
+                                            ROUTES_PATH.pokemon_detail(
+                                                pokeId[idx],
+                                            ),
+                                        )
+                                    }
                                 >
                                     <div
                                         css={css`
@@ -224,19 +255,31 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
         const evolvedPokemonSpecies = await Promise.all(
             evolvedPokeArr.map((url) =>
-                api.get(`pokemon/${url}`).then((res) => res.data),
+                api.get(`pokemon/${url}`).then((res) => {
+                    const pokeDetailKey: (keyof UsedPokeDetail)[] = [
+                        "abilities",
+                        "id",
+                        "name",
+                        "species",
+                        "sprites",
+                        "types",
+                        "weight",
+                    ];
+                    return dataFilter(res.data, pokeDetailKey);
+                }),
             ),
         );
 
         return {
             props: {
                 detailPoke,
-                speciesEvoPoke: evolvedPokemonSpecies as PokemonType[],
+                speciesEvoPoke: evolvedPokemonSpecies as UsedPokeDetail[],
+                pokeId: evolvedPokeArr,
             },
             revalidate: 3600,
         };
     } catch (error) {
-        console.error("Error fetching Pokémon list:", error);
+        console.error("Error fetching Pokémon Detail:", error);
 
         return {
             props: {

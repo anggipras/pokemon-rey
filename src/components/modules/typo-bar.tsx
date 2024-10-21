@@ -1,25 +1,31 @@
-import { Typography } from "@mui/material";
+import { Button, ButtonProps } from "@mui/material";
 import { css } from "@emotion/react";
-import { muiColor } from "@helpers/styles";
 import { PokeTypeColor, TypeDetail } from "src/types/pokemon";
 import { splitPokeUrl } from "@utils/custom-function";
 
-const TypoBar = ({ data }: { data: TypeDetail }) => {
+type TypoBarType = {
+    data: TypeDetail;
+    typeBtn?: boolean;
+} & ButtonProps;
+
+const TypoButton = ({ data, typeBtn = false, ...props }: TypoBarType) => {
     return (
-        <Typography
-            variant="h6"
+        <Button
             css={css`
                 background-color: ${PokeTypeColor[splitPokeUrl(data.url)]};
-                padding: 0 1rem;
+                padding: 0;
                 border-radius: 1rem;
-                text-align: center;
                 font-weight: bold;
+                font-size: 1.2rem;
+                color: white;
+                cursor: ${typeBtn ? "pointer" : "default"};
                 text-transform: capitalize;
             `}
+            {...props}
         >
             {data.name}
-        </Typography>
+        </Button>
     );
 };
 
-export default TypoBar;
+export default TypoButton;

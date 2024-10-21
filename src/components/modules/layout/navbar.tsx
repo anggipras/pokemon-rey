@@ -4,17 +4,26 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { css } from "@emotion/react";
 import Icon from "@constants/icons";
+import { ROUTES_PATH } from "@constants/config";
+import useTranslation from "next-translate/useTranslation";
+import setLanguage from "next-translate/setLanguage";
 
 export default function RootLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const { t } = useTranslation();
     const route = useRouter();
+    const { locale } = route;
     const pages: { title: string; route: string }[] = [
-        { title: "Home", route: "/" },
-        { title: "Pokemon Type", route: "/pokemon/type/" },
+        { title: "Home", route: ROUTES_PATH.home },
+        { title: "Pokemon Type", route: ROUTES_PATH.pokemon_type("water") },
     ];
+
+    const handleChangeLanguage = async () => {
+        await setLanguage(locale === "id" ? "en" : "id");
+    };
 
     return (
         <>
@@ -29,10 +38,12 @@ export default function RootLayout({
                         padding: "0.5rem 0",
                         maxWidth: "1200px",
                         margin: "0 auto",
+                        cursor: "pointer",
                     }}
+                    onClick={handleChangeLanguage}
                 >
                     <Icon.Language sx={{ color: "gray" }} />
-                    <div>English</div>
+                    <div>{t(`common:language-${locale}`)}</div>
                     <Icon.KeyboardArrowDown sx={{ color: "gray" }} />
                 </div>
             </div>
@@ -72,7 +83,8 @@ export default function RootLayout({
                                     sx={{
                                         my: 2,
                                         color:
-                                            route.asPath === page.route
+                                            route.asPath.includes(page.route) ||
+                                            page.route === "/"
                                                 ? muiColor(600).amber
                                                 : muiColor(500).grey,
                                         display: "block",
@@ -81,7 +93,8 @@ export default function RootLayout({
                                                 ? "bold"
                                                 : "normal",
                                         borderBottom:
-                                            route.asPath === page.route
+                                            route.asPath.includes(page.route) ||
+                                            page.route === "/"
                                                 ? `1px solid ${
                                                       muiColor(600).amber
                                                   }`

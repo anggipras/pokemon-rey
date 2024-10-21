@@ -1,6 +1,5 @@
-import { Button, Container, Grid2, Modal, Typography } from "@mui/material";
+import { Button, Grid2, Typography } from "@mui/material";
 import {
-    EmotionBoxModal,
     EmotionGrid,
     EmotionTable,
     EmotionTableCell,
@@ -9,18 +8,20 @@ import {
 } from "@components/emotion-components";
 import { css } from "@emotion/react";
 import Image from "next/image";
-import TypoBar from "./typo-bar";
+import TypoButton from "./typo-bar";
 import { muiColor } from "@helpers/styles";
 import { PokemonType } from "src/types/pokemon";
 import { useRouter } from "next/router";
 import { splitPokeUrl } from "@utils/custom-function";
+import { ROUTES_PATH } from "@constants/config";
 
 interface CardDetailInterface {
     data: PokemonType;
     url?: string;
+    typeBtn?: boolean;
 }
 
-const CardDetail = ({ data, url }: CardDetailInterface) => {
+const CardDetail = ({ data, url, typeBtn = false }: CardDetailInterface) => {
     const route = useRouter();
     return (
         <Grid2 container sx={{ alignItems: "center", padding: "5rem 0" }}>
@@ -103,7 +104,20 @@ const CardDetail = ({ data, url }: CardDetailInterface) => {
                                 <span style={{ marginRight: "0.5rem" }}>:</span>
                                 <EmotionGrid gridCol={3}>
                                     {data.types.map((dt) => (
-                                        <TypoBar key={dt.slot} data={dt.type} />
+                                        <TypoButton
+                                            key={dt.slot}
+                                            data={dt.type}
+                                            onClick={() => {
+                                                if (typeBtn) {
+                                                    route.push(
+                                                        ROUTES_PATH.pokemon_type(
+                                                            dt.type.name,
+                                                        ),
+                                                    );
+                                                }
+                                            }}
+                                            typeBtn={typeBtn}
+                                        />
                                     ))}
                                 </EmotionGrid>
                             </div>
@@ -116,7 +130,9 @@ const CardDetail = ({ data, url }: CardDetailInterface) => {
                         css={primaryButton}
                         sx={{ marginTop: "3rem" }}
                         onClick={() =>
-                            route.push(`/pokemon/detail/${splitPokeUrl(url)}`)
+                            route.push(
+                                ROUTES_PATH.pokemon_detail(splitPokeUrl(url)),
+                            )
                         }
                     >
                         More Detail

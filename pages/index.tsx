@@ -1,33 +1,23 @@
-import React, { FC, useEffect, useState } from "react";
-import Head from "next/head";
-import { useRouter } from "next/router";
 import useTranslation from "next-translate/useTranslation";
-import setLanguage from "next-translate/setLanguage";
-
-import {
-    Box,
-    Button,
-    Card,
-    CardActions,
-    CardContent,
-    Container,
-    Grid2,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    Typography,
-} from "@mui/material";
-import { Check } from "@mui/icons-material";
-import { ROUTES_PATH } from "@constants/config";
+import { useState } from "react";
+import Head from "next/head";
+import { Container, Typography } from "@mui/material";
 import HeroBg from "@components/modules/hero-bg";
 import PokeCard from "@components/modules/card";
 import { muiColor } from "@helpers/styles";
 import { css } from "@emotion/react";
 import baseApi from "@utils/api";
 import { GetStaticProps } from "next";
-import { PokemonType } from "src/types/pokemon";
+import {
+    Ability,
+    PokemonType,
+    Species,
+    Sprites,
+    TypePoke,
+} from "src/types/pokemon";
 import { splitPokeUrl } from "@utils/custom-function";
+import Pagination from "@components/modules/pagination";
+import { dataFilter } from "src/types/data-filter";
 
 interface Pokemon {
     name: string;
@@ -41,18 +31,31 @@ interface PokemonListProps {
     initialOffset: number;
 }
 
+interface UsedPokeDetail {
+    abilities: Ability[];
+    height: number;
+    id: number;
+    name: string;
+    species: Species;
+    sprites: Sprites;
+    types: TypePoke[];
+    weight: number;
+}
+
 const Index = ({
     countedPokemons,
     initialPokemons,
     initialOffset,
 }: PokemonListProps) => {
+    const { t } = useTranslation();
     const [pokemons, setPokemons] = useState<Pokemon[]>(initialPokemons);
     const [offset, setOffset] = useState<number>(initialOffset);
     const [loading, setLoading] = useState<boolean>(false);
-
-    const { t } = useTranslation();
-    const route = useRouter();
-    const { locale } = route;
+    const [activePage, setActivePage] = useState(1);
+    const [perPage, setPerPage] = useState<number>(9);
+    const [totalPages, setTotalPages] = useState<number>(
+        Math.floor(countedPokemons / perPage),
+    );
 
     const tempRequirements = [
         { desc: "requirement-desc-1", action: null },
@@ -62,24 +65,33 @@ const Index = ({
         { desc: "requirement-desc-5", action: null },
     ];
 
-    const handleChangeLanguage = async () => {
-        await setLanguage(locale === "id" ? "en" : "id");
-    };
-
     const fetchPokemons = async (newOffset: number) => {
         setLoading(true);
         try {
             const api = await baseApi(process.env.NEXT_PUBLIC_API_URL);
             const response = await api.get(
-                `/pokemon?limit=9&offset=${newOffset}`,
+                `/pokemon?limit=${perPage}&offset=${newOffset}`,
             );
-            setPokemons(response.data.results);
+            let initialPokemons = response.data.results;
+            initialPokemons = await Promise.all(
+                initialPokemons.map(async (pokemon: Pokemon) => {
+                    const id = pokemon.url.split("/").filter(Boolean).pop();
+                    const detailPokemon = await api.get(`/pokemon/${id}`);
+                    return { ...pokemon, detail: detailPokemon.data };
+                }),
+            );
+            setPokemons(initialPokemons);
             setOffset(newOffset);
         } catch (error) {
             console.error("Error fetching Pokémon list:", error);
         } finally {
             setLoading(false);
         }
+    };
+
+    const activePageHandler = async (clickedActivePage: string) => {
+        setActivePage(parseInt(clickedActivePage));
+        await fetchPokemons((parseInt(clickedActivePage) - 1) * perPage);
     };
 
     return (
@@ -89,107 +101,6 @@ const Index = ({
             </Head>
             <Container maxWidth="lg">
                 <HeroBg />
-                {/* <Box component="div" m={10}>
-                    <Grid2 container>
-                        <Grid2 size={12}>
-                            <Typography
-                                align="center"
-                                variant="h4"
-                                component="h3"
-                            >
-                                {t("home:welcome-title")}
-                            </Typography>
-                        </Grid2>
-                        <Grid2 size={12}>
-                            <Box component="div" m={2}>
-                                <Container maxWidth="sm">
-                                    <Typography variant="body1" component="p">
-                                        {t("home:welcome-description")}
-                                        <Button
-                                            target="_blank"
-                                            href="https://pokeapi.co/"
-                                            color="primary"
-                                            style={{
-                                                color: "##0082a3",
-                                                fontWeight: "bold",
-                                                textTransform: "capitalize",
-                                            }}
-                                        >
-                                            Pokemon API
-                                        </Button>
-                                    </Typography>
-                                    <Box m="5" height={30} />
-                                    <Card variant="elevation" elevation={8}>
-                                        <CardContent>
-                                            <Typography
-                                                color="textPrimary"
-                                                variant="h6"
-                                                gutterBottom
-                                            >
-                                                {t("home:requirement-title")}
-                                            </Typography>
-                                            <List>
-                                                {tempRequirements.map(
-                                                    (requirement, key) => (
-                                                        <ListItem
-                                                            disableGutters
-                                                            key={`requirement-list-${key}`}
-                                                        >
-                                                            <ListItemIcon>
-                                                                <Check />
-                                                            </ListItemIcon>
-                                                            <ListItemText>
-                                                                {t(
-                                                                    `home:${requirement.desc}`,
-                                                                )}
-                                                                {requirement.action ===
-                                                                    "change-language" && (
-                                                                    <Button
-                                                                        variant="contained"
-                                                                        color="primary"
-                                                                        size="small"
-                                                                        onClick={
-                                                                            handleChangeLanguage
-                                                                        }
-                                                                    >
-                                                                        {t(
-                                                                            `common:language-${locale}`,
-                                                                        )}
-                                                                    </Button>
-                                                                )}
-                                                            </ListItemText>
-                                                        </ListItem>
-                                                    ),
-                                                )}
-                                            </List>
-                                        </CardContent>
-                                        <CardActions>
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                fullWidth
-                                                onClick={() =>
-                                                    route.push(
-                                                        ROUTES_PATH.pokemon_list,
-                                                    )
-                                                }
-                                            >
-                                                {t("home:requirement-action")}
-                                            </Button>
-                                        </CardActions>
-                                    </Card>
-                                </Container>
-                            </Box>
-                        </Grid2>
-                        <Grid2 size={12}>
-                            <Box component="div" m={5}>
-                                <Typography variant="h4" component="h3">
-                                    {t("home:welcome-work")}
-                                </Typography>
-                            </Box>
-                        </Grid2>
-                    </Grid2>
-                </Box> */}
             </Container>
             <div
                 id="pokedex"
@@ -218,7 +129,7 @@ const Index = ({
                                 marginTop: "2rem",
                             }}
                         >
-                            All Generation totaling
+                            {t("home:pokedex.title")}
                             <br />
                             {countedPokemons || 0} Pokemon
                         </Typography>
@@ -238,6 +149,45 @@ const Index = ({
                             />
                         ))}
                     </div>
+                    <div
+                        css={css`
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            margin-top: 2rem;
+                            width: 100%;
+                        `}
+                    >
+                        <Typography
+                            variant="h6"
+                            css={css`
+                                color: white;
+                                width: 100%;
+                            `}
+                        >
+                            {t("common:pagination.page")}: {perPage}
+                        </Typography>
+                        <Pagination
+                            listTheme="#ffffff"
+                            mainTheme={muiColor(300).amber}
+                            active={activePage}
+                            onClickHandler={activePageHandler}
+                            size={totalPages}
+                            step={1}
+                        />
+                        <Typography
+                            variant="h6"
+                            css={css`
+                                display: flex;
+                                color: white;
+                                width: 100%;
+                                justify-content: flex-end;
+                            `}
+                        >
+                            {t("common:pagination.total")}:{" "}
+                            {countedPokemons || 0}
+                        </Typography>
+                    </div>
                 </Container>
             </div>
         </>
@@ -256,7 +206,20 @@ export const getStaticProps: GetStaticProps = async () => {
             initialPokemons.map(async (pokemon: Pokemon) => {
                 const id = pokemon.url.split("/").filter(Boolean).pop(); // Extract ID from URL
                 const detailPokemon = await api.get(`/pokemon/${id}`); // Fetch Pokémon detail
-                return { ...pokemon, detail: detailPokemon.data }; // Add detail to the Pokémon
+                const pokeDetailDtKey: (keyof UsedPokeDetail)[] = [
+                    "abilities",
+                    "id",
+                    "name",
+                    "species",
+                    "sprites",
+                    "types",
+                    "weight",
+                ];
+                const pokeDetail = dataFilter(
+                    detailPokemon.data,
+                    pokeDetailDtKey,
+                );
+                return { ...pokemon, detail: pokeDetail }; // Add detail to the Pokémon
             }),
         );
 

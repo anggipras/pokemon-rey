@@ -3,7 +3,7 @@ import { muiColor } from "@helpers/styles";
 import { Modal, Typography } from "@mui/material";
 import Image from "next/image";
 import { useState } from "react";
-import TypoBar from "./typo-bar";
+import TypoButton from "./typo-bar";
 import { EmotionBoxModal, EmotionGrid } from "@components/emotion-components";
 import { PokemonType } from "src/types/pokemon";
 import CardDetail from "./card-detail";
@@ -56,7 +56,7 @@ const PokeCard = ({ data, url }: { data: PokemonType; url: string }) => {
                 </Typography>
                 <EmotionGrid gridCol={2}>
                     {data.types.map((dt) => (
-                        <TypoBar key={dt.slot} data={dt.type} />
+                        <TypoButton key={dt.slot} data={dt.type} />
                     ))}
                 </EmotionGrid>
             </div>

@@ -1,3 +1,4 @@
+import useTranslation from "next-translate/useTranslation";
 import { primaryButton } from "@components/emotion-components";
 import { muiColor } from "@helpers/styles";
 import { Button, Grid2, Typography } from "@mui/material";
@@ -5,6 +6,7 @@ import { scrollToDynamicView } from "@utils/browser-behaviour";
 import Image from "next/image";
 
 const HeroBg = () => {
+    const { t } = useTranslation();
     return (
         <Grid2 container sx={{ alignItems: "center", padding: "5rem 0" }}>
             <Grid2 size={6}>
@@ -12,20 +14,20 @@ const HeroBg = () => {
                     variant="h2"
                     sx={{ color: muiColor(800).grey, fontWeight: "bold" }}
                 >
-                    All the Pokémon data you`ll ever need in one place!
+                    {t("home:hero.title")}
                 </Typography>
                 <Typography
                     variant="h6"
                     sx={{ color: muiColor(500).grey, margin: "2rem 0" }}
                 >
-                    Thousands of data compiled into one place
+                    {t("home:hero.desc")}
                 </Typography>
                 <Button
                     variant="contained"
                     css={primaryButton}
                     onClick={() => scrollToDynamicView("pokedex")}
                 >
-                    Check PokèDex
+                    {t("home:hero.btn")}
                 </Button>
             </Grid2>
             <Grid2 size={6}>
