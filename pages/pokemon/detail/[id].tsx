@@ -15,25 +15,24 @@ import {
 import { css } from "@emotion/react";
 import { splitPokeUrl } from "@utils/custom-function";
 import Icon from "@constants/icons";
-import { EvolvesTo, PokemonEvolution } from "src/types/evolution";
+import { Chain, PokemonEvolution } from "src/types/evolution";
 
-const DetailPokemon = ({
-    detailPokemon,
-}: // pokeSpeciesEvo,
-{
-    detailPokemon: PokemonType;
-    // pokeSpeciesEvo: PokemonType[];
+const PokemonDetail = ({
+    detailPoke,
+    speciesEvoPoke,
+}: {
+    detailPoke: PokemonType;
+    speciesEvoPoke: PokemonType[];
 }) => {
     const { t } = useTranslation();
-    // console.log(pokeSpeciesEvo);
 
     return (
         <>
             <Head>
-                <title>{detailPokemon.name} - Pokemon</title>
+                <title>{detailPoke.name} - Pokemon</title>
             </Head>
             <Container maxWidth="lg">
-                <CardDetail data={detailPokemon} />
+                <CardDetail data={detailPoke} />
                 <Typography
                     variant="h6"
                     sx={{
@@ -45,7 +44,7 @@ const DetailPokemon = ({
                     Other Images :
                 </Typography>
                 <EmotionGrid gridCol={6}>
-                    {Object.values(detailPokemon.sprites.other).map(
+                    {Object.values(detailPoke.sprites.other).map(
                         (category: FrontDefaultSprite, idx) => (
                             <Image
                                 key={idx}
@@ -70,7 +69,7 @@ const DetailPokemon = ({
                         Stats :
                     </Typography>
                     <EmotionGrid gridCol={6} style={{ alignItems: "stretch" }}>
-                        {detailPokemon.stats.map((dt) => (
+                        {detailPoke.stats.map((dt) => (
                             <div
                                 key={dt.stat.url}
                                 css={css`
@@ -131,14 +130,14 @@ const DetailPokemon = ({
                         css={css`
                             display: flex;
                             align-items: center;
-                            justify-content: center;
+                            justify-content: flex-start;
                             gap: 1rem;
                         `}
                     >
-                        {[1, 2, 3, 4].map((dt, idx) => (
+                        {speciesEvoPoke.map((evo, idx) => (
                             <>
                                 <div
-                                    key={idx}
+                                    key={`species-evo-${evo.id}`}
                                     css={css`
                                         display: flex;
                                         align-items: center;
@@ -149,8 +148,8 @@ const DetailPokemon = ({
                                     <div
                                         css={css`
                                             display: flex;
-                                            width: 200px;
-                                            height: 200px;
+                                            width: 170px;
+                                            height: 170px;
                                             border-radius: 50%;
                                             align-items: center;
                                             justify-content: center;
@@ -160,15 +159,26 @@ const DetailPokemon = ({
                                         `}
                                     >
                                         <Image
-                                            src="/imgs/pokemon_hero.png"
-                                            height="100"
-                                            width="100"
+                                            src={evo.sprites.front_default}
+                                            height="150"
+                                            width="150"
                                             alt="PokeDex"
                                         />
                                     </div>
-                                    <p>Pokemon Evolution State 1 Name</p>
+                                    <Typography
+                                        variant="h6"
+                                        sx={{
+                                            color: muiColor(800).grey,
+                                            fontWeight: "bold",
+                                            marginBottom: "2rem",
+                                            textTransform: "capitalize",
+                                            marginTop: "1rem",
+                                        }}
+                                    >
+                                        {evo.name}
+                                    </Typography>
                                 </div>
-                                {idx < 3 && (
+                                {idx < speciesEvoPoke.length - 1 && (
                                     <Icon.ArrowForward fontSize="large" />
                                 )}
                             </>
@@ -191,9 +201,9 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     const api = await baseApi(process.env.NEXT_PUBLIC_API_URL);
 
     try {
-        const response = await api.get(`pokemon/${ctx.params.id}`);
+        const pokeRes = await api.get(`pokemon/${ctx.params.id}`);
         const pokeSpecies = await api.get(`pokemon-species/${ctx.params.id}`);
-        const detailPokemon = response.data;
+        const detailPoke = pokeRes.data;
         const pokeSpeciesId = splitPokeUrl(
             pokeSpecies.data.evolution_chain.url,
         );
@@ -201,28 +211,27 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
             `evolution-chain/${pokeSpeciesId}`,
         );
         const pokeSpeciesData = pokeSpeciesEvo.data as PokemonEvolution;
-        const evolvedPoke = [
-            await api.get(
-                `pokemon/${splitPokeUrl(pokeSpeciesData.chain.species.url)}`,
-            ),
-        ];
-        const extractEvolveData = async (obj: EvolvesTo) => {
-            evolvedPoke.push(
-                await api.get(`pokemon/${splitPokeUrl(obj.species.url)}`),
-            );
-            if (obj.evolves_to && obj.evolves_to.length > 0) {
-                obj.evolves_to.forEach((innerObj) =>
-                    extractEvolveData(innerObj),
-                );
+        const evolvedPokeArr: string[] = [];
+        const getSpeciesUrls = (chain: Chain): void => {
+            evolvedPokeArr.push(splitPokeUrl(chain.species.url));
+
+            // If there are evolutions (evolves_to has length), continue the recursion
+            if (chain.evolves_to.length > 0) {
+                getSpeciesUrls(chain.evolves_to[0]);
             }
         };
-        pokeSpeciesData.chain.evolves_to.forEach((v) => extractEvolveData(v));
-        const allEvolvedPokemon = await Promise.all(evolvedPoke);
+        getSpeciesUrls(pokeSpeciesData.chain);
+
+        const evolvedPokemonSpecies = await Promise.all(
+            evolvedPokeArr.map((url) =>
+                api.get(`pokemon/${url}`).then((res) => res.data),
+            ),
+        );
 
         return {
             props: {
-                detailPokemon,
-                // pokeSpeciesEvo: allEvolvedPokemon,
+                detailPoke,
+                speciesEvoPoke: evolvedPokemonSpecies as PokemonType[],
             },
             revalidate: 3600,
         };
@@ -237,4 +246,4 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     }
 };
 
-export default DetailPokemon;
+export default PokemonDetail;
