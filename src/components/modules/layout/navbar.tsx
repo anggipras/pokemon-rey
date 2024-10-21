@@ -16,9 +16,13 @@ export default function RootLayout({
     const { t } = useTranslation();
     const route = useRouter();
     const { locale } = route;
-    const pages: { title: string; route: string }[] = [
-        { title: "Home", route: ROUTES_PATH.home },
-        { title: "Pokemon Type", route: ROUTES_PATH.pokemon_type("water") },
+    const pages: { title: string; route: string; basePath: string }[] = [
+        { title: "Home", route: ROUTES_PATH.home, basePath: "/" },
+        {
+            title: "Pokemon Type",
+            route: ROUTES_PATH.pokemon_type("water"),
+            basePath: "/pokemon/type",
+        },
     ];
 
     const handleChangeLanguage = async () => {
@@ -83,18 +87,18 @@ export default function RootLayout({
                                     sx={{
                                         my: 2,
                                         color:
-                                            route.asPath.includes(page.route) ||
-                                            page.route === "/"
+                                            route.asPath === page.basePath
+                                                ? true
+                                                : route.asPath ===
+                                                  `${page.basePath}/${route.query.id}/`
                                                 ? muiColor(600).amber
                                                 : muiColor(500).grey,
                                         display: "block",
-                                        fontWeight:
-                                            route.asPath === page.route
-                                                ? "bold"
-                                                : "normal",
                                         borderBottom:
-                                            route.asPath.includes(page.route) ||
-                                            page.route === "/"
+                                            route.asPath === page.basePath
+                                                ? true
+                                                : route.asPath ===
+                                                  `${page.basePath}/${route.query.id}/`
                                                 ? `1px solid ${
                                                       muiColor(600).amber
                                                   }`
