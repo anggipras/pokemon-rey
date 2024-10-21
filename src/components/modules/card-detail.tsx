@@ -14,6 +14,7 @@ import { PokemonType } from "src/types/pokemon";
 import { useRouter } from "next/router";
 import { splitPokeUrl } from "@utils/custom-function";
 import { ROUTES_PATH } from "@constants/config";
+import useTranslation from "next-translate/useTranslation";
 
 interface CardDetailInterface {
     data: PokemonType;
@@ -22,6 +23,7 @@ interface CardDetailInterface {
 }
 
 const CardDetail = ({ data, url, typeBtn = false }: CardDetailInterface) => {
+    const { t } = useTranslation();
     const route = useRouter();
     return (
         <Grid2 container sx={{ alignItems: "center", padding: "5rem 0" }}>
@@ -49,7 +51,7 @@ const CardDetail = ({ data, url, typeBtn = false }: CardDetailInterface) => {
                 <EmotionTable>
                     <EmotionTableRow>
                         <Typography variant="h6" sx={{ display: "table-cell" }}>
-                            <strong>Weight</strong>
+                            <strong>{t("common:card-detail.width")}</strong>
                         </Typography>
                         <EmotionTableCell>
                             <Grid2 container>
@@ -60,7 +62,10 @@ const CardDetail = ({ data, url, typeBtn = false }: CardDetailInterface) => {
                                 </Grid2>
                                 <Grid2 size={6}>
                                     <Typography variant="h6">
-                                        <strong>Height</strong>: {data.height}
+                                        <strong>
+                                            {t("common:card-detail.height")}
+                                        </strong>
+                                        : {data.height}
                                     </Typography>
                                 </Grid2>
                             </Grid2>
@@ -68,7 +73,7 @@ const CardDetail = ({ data, url, typeBtn = false }: CardDetailInterface) => {
                     </EmotionTableRow>
                     <EmotionTableRow>
                         <Typography variant="h6" sx={{ display: "table-cell" }}>
-                            <strong>Abilities</strong>
+                            <strong>{t("common:card-detail.ab")}</strong>
                         </Typography>
                         <Typography variant="h6" sx={{ display: "table-cell" }}>
                             <div style={{ display: "flex" }}>
@@ -80,14 +85,13 @@ const CardDetail = ({ data, url, typeBtn = false }: CardDetailInterface) => {
                                     }}
                                 >
                                     {data.abilities.map((ab) => (
-                                        <li
-                                            key={ab.ability.url}
-                                            style={{
-                                                textTransform: "capitalize",
-                                            }}
-                                        >
+                                        <li key={ab.ability.url}>
                                             {`${ab.ability.name}${
-                                                ab.is_hidden ? " (hidden)" : " "
+                                                ab.is_hidden
+                                                    ? ` ${t(
+                                                          "common:card-detail.hidden",
+                                                      )}`
+                                                    : " "
                                             }`}
                                         </li>
                                     ))}
@@ -97,7 +101,7 @@ const CardDetail = ({ data, url, typeBtn = false }: CardDetailInterface) => {
                     </EmotionTableRow>
                     <EmotionTableRow>
                         <Typography variant="h6" sx={{ display: "table-cell" }}>
-                            <strong>Type</strong>
+                            <strong>{t("common:card-detail.type")}</strong>
                         </Typography>
                         <EmotionTableCell>
                             <div style={{ display: "flex" }}>
@@ -109,7 +113,7 @@ const CardDetail = ({ data, url, typeBtn = false }: CardDetailInterface) => {
                                             data={dt.type}
                                             onClick={() => {
                                                 if (typeBtn) {
-                                                    route.push(
+                                                    route.replace(
                                                         ROUTES_PATH.pokemon_type(
                                                             dt.type.name,
                                                         ),
@@ -130,12 +134,12 @@ const CardDetail = ({ data, url, typeBtn = false }: CardDetailInterface) => {
                         css={primaryButton}
                         sx={{ marginTop: "3rem" }}
                         onClick={() =>
-                            route.push(
+                            route.replace(
                                 ROUTES_PATH.pokemon_detail(splitPokeUrl(url)),
                             )
                         }
                     >
-                        More Detail
+                        {t("common:card-detail.btn")}
                     </Button>
                 )}
             </Grid2>

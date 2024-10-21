@@ -12,5 +12,13 @@
     },
     "poke-type": {
         "title": "Pokemon with Type"
+    },
+    "card-detail": {
+        "btn": "More Detail",
+        "type": "Type",
+        "ab": "Abilities",
+        "height": "Height",
+        "width": "Width",
+        "hidden": "(hidden)"
     }
 }

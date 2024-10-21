@@ -77,21 +77,53 @@ const PokemonTypePage = ({
     return (
         <>
             <Head>{capitalizeFirstLetter(name)} - Pokemon Type</Head>
-            {/* <div
+            <div
                 css={css`
                     position: absolute;
-                    top: 0;
-                    right: 0;
+                    top: 90vh;
+                    left: 0;
+                    z-index: -1;
                 `}
             >
-                <Image
-                    src="/imgs/pokemon_hero.png"
-                    height="1000"
-                    width="1000"
-                    alt="pokemon-type-detail"
-                    style={{ position: "absolute" }}
-                />
-            </div> */}
+                <svg
+                    width="392"
+                    height="780"
+                    viewBox="0 0 392 780"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <path
+                        d="M2 670C156.64 670 282 544.64 282 390C282 235.36 156.64 110 2 110"
+                        stroke={PokeTypeColor[id]}
+                        strokeWidth="220"
+                        strokeLinecap="round"
+                    />
+                </svg>
+            </div>
+            <div
+                css={css`
+                    position: absolute;
+                    top: 30vh;
+                    right: 0;
+                    z-index: -1;
+                `}
+            >
+                <svg
+                    width="392"
+                    height="780"
+                    viewBox="0 0 392 780"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <path
+                        d="M2 670C156.64 670 282 544.64 282 390C282 235.36 156.64 110 2 110"
+                        stroke={PokeTypeColor[id]}
+                        strokeWidth="220"
+                        strokeLinecap="round"
+                        transform="rotate(180, 196, 390)"
+                    />
+                </svg>
+            </div>
             <Container maxWidth="lg" sx={{ padding: "3rem 0" }}>
                 <Typography
                     variant="h3"
@@ -109,7 +141,7 @@ const PokemonTypePage = ({
                     component={Paper}
                     css={css`
                         padding: 3rem;
-                        background-color: transparent;
+                        background-color: ${muiColor(100).grey}80;
                         box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
                             rgba(0, 0, 0, 0.22) 0px 10px 10px;
                         border-radius: 3rem;
@@ -127,7 +159,7 @@ const PokemonTypePage = ({
                                         cursor: "pointer",
                                     }}
                                     onClick={() =>
-                                        router.push(
+                                        router.replace(
                                             ROUTES_PATH.pokemon_detail(
                                                 splitPokeUrl(row.pokemon.url),
                                             ),

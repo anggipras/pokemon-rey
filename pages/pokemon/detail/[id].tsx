@@ -170,7 +170,7 @@ const PokemonDetail = ({
                                         cursor: pointer;
                                     `}
                                     onClick={() =>
-                                        router.push(
+                                        router.replace(
                                             ROUTES_PATH.pokemon_detail(
                                                 pokeId[idx],
                                             ),

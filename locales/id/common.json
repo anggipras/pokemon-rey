@@ -12,5 +12,13 @@
     },
     "poke-type": {
         "title": "Pokemon dengan Tipe"
+    },
+    "card-detail": {
+        "btn": "Lihat Detail",
+        "type": "Tipe",
+        "ab": "Kemampuan",
+        "height": "Tinggi",
+        "width": "Lebar",
+        "hidden": "(tersembunyi)"
     }
 }

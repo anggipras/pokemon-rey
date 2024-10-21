@@ -70,7 +70,7 @@ export default function RootLayout({
                             css={css`
                                 cursor: pointer;
                             `}
-                            onClick={() => route.push("/")}
+                            onClick={() => route.replace("/")}
                         />
                         <Box
                             sx={{
@@ -83,12 +83,12 @@ export default function RootLayout({
                             {pages.map((page, idx) => (
                                 <Button
                                     key={idx}
-                                    onClick={() => route.push(page.route)}
+                                    onClick={() => route.replace(page.route)}
                                     sx={{
                                         my: 2,
                                         color:
                                             route.asPath === page.basePath
-                                                ? true
+                                                ? route.asPath === page.basePath
                                                 : route.asPath ===
                                                   `${page.basePath}/${route.query.id}/`
                                                 ? muiColor(600).amber
@@ -96,7 +96,7 @@ export default function RootLayout({
                                         display: "block",
                                         borderBottom:
                                             route.asPath === page.basePath
-                                                ? true
+                                                ? route.asPath === page.basePath
                                                 : route.asPath ===
                                                   `${page.basePath}/${route.query.id}/`
                                                 ? `1px solid ${
