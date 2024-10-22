@@ -51,13 +51,15 @@ const PokemonTypePage = ({
     id,
     name,
     pokemon,
+    pokeChannel,
 }: {
     id: number;
     name: string;
     pokemon: PokemonTypeWithDetail[];
+    pokeChannel: Species[];
 }) => {
     const { t } = useTranslation();
-    const router = useRouter();
+    const route = useRouter();
     const [filteredPokeType, setFilteredPokeType] = useState<
         PokemonTypeWithDetail[]
     >(pokemon.filter((_, idx) => idx < 9));
@@ -124,142 +126,192 @@ const PokemonTypePage = ({
                     />
                 </svg>
             </div>
-            <Container maxWidth="lg" sx={{ padding: "3rem 0" }}>
-                <Typography
-                    variant="h3"
-                    sx={{
-                        color: muiColor(800).grey,
-                        fontWeight: "bold",
-                        marginBottom: "2rem",
-                        textTransform: "capitalize",
-                        marginTop: "1rem",
-                    }}
-                >
-                    {t("common:poke-type.title")} {name}
-                </Typography>
-                <TableContainer
-                    component={Paper}
-                    css={css`
-                        padding: 3rem;
-                        background-color: ${muiColor(100).grey}80;
-                        box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
-                            rgba(0, 0, 0, 0.22) 0px 10px 10px;
-                        border-radius: 3rem;
-                    `}
-                >
-                    <Table>
-                        <TableBody>
-                            {filteredPokeType.map((row, idx) => (
-                                <TableRow
-                                    key={`table-row-${idx}`}
-                                    sx={{
-                                        "&:last-child td, &:last-child th": {
-                                            border: 0,
-                                        },
-                                        cursor: "pointer",
-                                    }}
-                                    onClick={() =>
-                                        router.replace(
-                                            ROUTES_PATH.pokemon_detail(
-                                                splitPokeUrl(row.pokemon.url),
-                                            ),
-                                        )
-                                    }
-                                >
-                                    <TableCell>
-                                        <div>
-                                            <Image
-                                                src={
-                                                    row.detail.sprites.other[
-                                                        "official-artwork"
-                                                    ].front_default
-                                                }
-                                                height="100"
-                                                width="100"
-                                                alt="pokemon-type-detail"
-                                            />
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Typography
-                                            variant="h6"
-                                            sx={{
-                                                color: muiColor(800).grey,
-                                                fontWeight: "bold",
-                                                marginBottom: "2rem",
-                                                textTransform: "capitalize",
-                                                marginTop: "1rem",
-                                            }}
-                                        >
-                                            #{row.detail.id}
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Typography
-                                            variant="h6"
-                                            sx={{
-                                                color: muiColor(800).grey,
-                                                fontWeight: "bold",
-                                                marginBottom: "2rem",
-                                                textTransform: "capitalize",
-                                                marginTop: "1rem",
-                                            }}
-                                        >
-                                            {row.detail.name}
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        <EmotionGrid gridCol={3}>
-                                            {row.detail.types.map((dt) => (
-                                                <TypoButton
-                                                    key={dt.slot}
-                                                    data={dt.type}
-                                                />
-                                            ))}
-                                        </EmotionGrid>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+            <Container
+                maxWidth="lg"
+                sx={{ display: "flex", padding: "3rem 0" }}
+            >
                 <div
                     css={css`
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-top: 2rem;
-                        width: 100%;
+                        padding: 2rem;
+                        min-width: 12rem;
                     `}
                 >
                     <Typography
                         variant="h6"
+                        sx={{
+                            color: muiColor(800).grey,
+                            fontWeight: "bold",
+                            marginBottom: "1rem",
+                        }}
+                    >
+                        {t("common:poke-type.sidebar")}
+                    </Typography>
+                    <ul>
+                        {pokeChannel.map((pk) => (
+                            <li
+                                css={css`
+                                    color: ${pk.name === name
+                                        ? [PokeTypeColor[id]]
+                                        : muiColor(800).grey};
+                                    margin-bottom: 1rem;
+                                    text-transform: capitalize;
+                                    cursor: pointer;
+                                    &:hover {
+                                        color: ${PokeTypeColor[id]};
+                                    }
+                                `}
+                                key={pk.url}
+                                onClick={() =>
+                                    route.replace(
+                                        ROUTES_PATH.pokemon_type(pk.name),
+                                    )
+                                }
+                            >
+                                {pk.name}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div style={{ width: "100%" }}>
+                    <Typography
+                        variant="h3"
+                        sx={{
+                            color: muiColor(800).grey,
+                            fontWeight: "bold",
+                            marginBottom: "2rem",
+                            textTransform: "capitalize",
+                            marginTop: "1rem",
+                        }}
+                    >
+                        {t("common:poke-type.title")} {name}
+                    </Typography>
+                    <TableContainer
+                        component={Paper}
                         css={css`
-                            color: ${PokeTypeColor[id]};
-                            width: 100%;
+                            padding: 3rem;
+                            background-color: ${muiColor(100).grey}80;
+                            box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
+                                rgba(0, 0, 0, 0.22) 0px 10px 10px;
+                            border-radius: 3rem;
+                            width: unset;
                         `}
                     >
-                        {t("common:pagination.page")}: {perPage}
-                    </Typography>
-                    <Pagination
-                        listTheme={PokeTypeColor[id]}
-                        mainTheme="#ffffff"
-                        active={activePage}
-                        onClickHandler={activePageHandler}
-                        size={totalPages}
-                        step={1}
-                    />
-                    <Typography
-                        variant="h6"
+                        <Table>
+                            <TableBody>
+                                {filteredPokeType.map((row, idx) => (
+                                    <TableRow
+                                        key={`table-row-${idx}`}
+                                        sx={{
+                                            "&:last-child td, &:last-child th":
+                                                {
+                                                    border: 0,
+                                                },
+                                            cursor: "pointer",
+                                        }}
+                                        onClick={() =>
+                                            route.replace(
+                                                ROUTES_PATH.pokemon_detail(
+                                                    splitPokeUrl(
+                                                        row.pokemon.url,
+                                                    ),
+                                                ),
+                                            )
+                                        }
+                                    >
+                                        <TableCell>
+                                            <div>
+                                                <Image
+                                                    src={
+                                                        row.detail.sprites
+                                                            .other[
+                                                            "official-artwork"
+                                                        ].front_default
+                                                    }
+                                                    height="100"
+                                                    width="100"
+                                                    alt="pokemon-type-detail"
+                                                />
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography
+                                                variant="h6"
+                                                sx={{
+                                                    color: muiColor(800).grey,
+                                                    fontWeight: "bold",
+                                                    marginBottom: "2rem",
+                                                    textTransform: "capitalize",
+                                                    marginTop: "1rem",
+                                                }}
+                                            >
+                                                #{row.detail.id}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography
+                                                variant="h6"
+                                                sx={{
+                                                    color: muiColor(800).grey,
+                                                    fontWeight: "bold",
+                                                    marginBottom: "2rem",
+                                                    textTransform: "capitalize",
+                                                    marginTop: "1rem",
+                                                }}
+                                            >
+                                                {row.detail.name}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <EmotionGrid gridCol={3}>
+                                                {row.detail.types.map((dt) => (
+                                                    <TypoButton
+                                                        key={dt.slot}
+                                                        data={dt.type}
+                                                    />
+                                                ))}
+                                            </EmotionGrid>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <div
                         css={css`
                             display: flex;
-                            color: ${PokeTypeColor[id]};
+                            justify-content: space-between;
+                            align-items: center;
+                            margin-top: 2rem;
                             width: 100%;
-                            justify-content: flex-end;
                         `}
                     >
-                        {t("common:pagination.total")}: {totalPages || 0}
-                    </Typography>
+                        <div
+                            css={css`
+                                color: ${PokeTypeColor[id]};
+                                width: 100%;
+                            `}
+                        >
+                            {t("common:pagination.page")}: {perPage}
+                        </div>
+                        <Pagination
+                            listTheme={PokeTypeColor[id]}
+                            mainTheme="#ffffff"
+                            active={activePage}
+                            onClickHandler={activePageHandler}
+                            size={totalPages}
+                            step={1}
+                        />
+                        <div
+                            css={css`
+                                display: flex;
+                                color: ${PokeTypeColor[id]};
+                                width: 100%;
+                                justify-content: flex-end;
+                            `}
+                        >
+                            {t("common:pagination.total")}: {totalPages || 0}
+                        </div>
+                    </div>
                 </div>
             </Container>
         </>
@@ -328,11 +380,14 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
             }),
         );
 
+        const apiTypeResponse = await api.get("type?limit=100");
+
         return {
             props: {
                 id: pokeType.id,
                 name: pokeType.name,
                 pokemon: pokeType.pokemon,
+                pokeChannel: apiTypeResponse.data.results as Species[],
             },
             revalidate: 3600,
         };

@@ -20,7 +20,7 @@ export default function RootLayout({
         { title: "Home", route: ROUTES_PATH.home, basePath: "/" },
         {
             title: "Pokemon Type",
-            route: ROUTES_PATH.pokemon_type("water"),
+            route: ROUTES_PATH.pokemon_type("normal"),
             basePath: "/pokemon/type",
         },
     ];
@@ -87,18 +87,16 @@ export default function RootLayout({
                                     sx={{
                                         my: 2,
                                         color:
-                                            route.asPath === page.basePath
-                                                ? route.asPath === page.basePath
-                                                : route.asPath ===
-                                                  `${page.basePath}/${route.query.id}/`
+                                            page.basePath === route.asPath ||
+                                            route.asPath ===
+                                                `${page.basePath}/${route.query.id}/`
                                                 ? muiColor(600).amber
                                                 : muiColor(500).grey,
                                         display: "block",
                                         borderBottom:
-                                            route.asPath === page.basePath
-                                                ? route.asPath === page.basePath
-                                                : route.asPath ===
-                                                  `${page.basePath}/${route.query.id}/`
+                                            page.basePath === route.asPath ||
+                                            route.asPath ===
+                                                `${page.basePath}/${route.query.id}/`
                                                 ? `1px solid ${
                                                       muiColor(600).amber
                                                   }`

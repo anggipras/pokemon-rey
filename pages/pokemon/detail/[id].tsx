@@ -70,14 +70,23 @@ const PokemonDetail = ({
                 <EmotionGrid gridCol={6}>
                     {Object.values(detailPoke.sprites.other).map(
                         (category: FrontDefaultSprite, idx) => (
-                            <Image
+                            <div
                                 key={idx}
-                                src={category.front_default || ""}
-                                height="0"
-                                width="0"
-                                sizes="100%"
-                                alt="Poke-Rey-detail-sprites"
-                            />
+                                css={css`
+                                    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px
+                                            5px -1px,
+                                        rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+                                    border-radius: 0.5rem;
+                                `}
+                            >
+                                <Image
+                                    src={category.front_default || ""}
+                                    height="0"
+                                    width="0"
+                                    sizes="100%"
+                                    alt="Poke-Rey-detail-sprites"
+                                />
+                            </div>
                         ),
                     )}
                 </EmotionGrid>

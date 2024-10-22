@@ -11,7 +11,8 @@
         "evo": "Evolusi"
     },
     "poke-type": {
-        "title": "Pokemon dengan Tipe"
+        "title": "Pokemon dengan Tipe",
+        "sidebar": "Tipe Pokemon"
     },
     "card-detail": {
         "btn": "Lihat Detail",

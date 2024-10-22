@@ -50,6 +50,16 @@ const Pagination = (props: PaginationProps) => {
         }
     }
 
+    const generalPaginationCSS = css`
+        justify-content: center;
+        align-items: center;
+        border: 0.2rem solid ${props.listTheme};
+        width: 2.5rem;
+        height: 3rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+    `;
+
     return (
         <div
             css={css`
@@ -69,14 +79,8 @@ const Pagination = (props: PaginationProps) => {
                         ${mediaFrom(breakpoints.lg)} {
                             display: flex;
                         }
-                        justify-content: center;
-                        align-items: center;
-                        border: 0.2rem solid ${props.listTheme};
-                        width: 2.5rem;
-                        height: 3rem;
-                        border-radius: 0.5rem;
+                        ${generalPaginationCSS}
                         margin-right: 1rem;
-                        cursor: pointer;
                     `}
                     onClick={() => {
                         onClickHandler(1);
@@ -93,14 +97,8 @@ const Pagination = (props: PaginationProps) => {
                         aria-hidden="true"
                         css={css`
                             display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            border: 0.2rem solid ${props.listTheme};
-                            width: 2.5rem;
-                            height: 3rem;
-                            border-radius: 0.5rem;
+                            ${generalPaginationCSS}
                             margin-right: 1rem;
-                            cursor: pointer;
                         `}
                         onClick={() => {
                             onClickHandler(active - 1);
@@ -114,14 +112,8 @@ const Pagination = (props: PaginationProps) => {
                     <div
                         css={css`
                             display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            border: 0.2rem solid ${props.listTheme};
-                            width: 2.5rem;
-                            height: 3rem;
-                            border-radius: 0.5rem;
+                            ${generalPaginationCSS}
                             margin-right: 1rem;
-                            cursor: pointer;
                         `}
                         aria-disabled
                     >
@@ -145,13 +137,7 @@ const Pagination = (props: PaginationProps) => {
                             ${mediaFrom(breakpoints.lg)} {
                                 display: flex;
                             }
-                            justify-content: center;
-                            align-items: center;
-                            border: 0.2rem solid ${props.listTheme};
-                            width: 2.5rem;
-                            height: 3rem;
-                            border-radius: 0.5rem;
-                            cursor: pointer;
+                            ${generalPaginationCSS}
                             background: ${active === 1
                                 ? props.listTheme
                                 : props.mainTheme};
@@ -194,13 +180,7 @@ const Pagination = (props: PaginationProps) => {
                                 aria-hidden="true"
                                 css={css`
                                     display: flex;
-                                    justify-content: center;
-                                    align-items: center;
-                                    border: 0.2rem solid ${props.listTheme};
-                                    width: 2.5rem;
-                                    height: 3rem;
-                                    border-radius: 0.5rem;
-                                    cursor: pointer;
+                                    ${generalPaginationCSS}
                                     background: ${active === contentNumber
                                         ? props.listTheme
                                         : props.mainTheme};
@@ -217,6 +197,7 @@ const Pagination = (props: PaginationProps) => {
                                         ),
                                     );
                                 }}
+                                data-testid={`pagination-ctn-num-${contentNumber}`}
                             >
                                 {contentNumber}
                             </div>
@@ -244,13 +225,7 @@ const Pagination = (props: PaginationProps) => {
                             ${mediaFrom(breakpoints.lg)} {
                                 display: flex;
                             }
-                            justify-content: center;
-                            align-items: center;
-                            border: 0.2rem solid ${props.listTheme};
-                            width: 2.5rem;
-                            height: 3rem;
-                            border-radius: 0.5rem;
-                            cursor: pointer;
+                            ${generalPaginationCSS}
                             background: ${active === size
                                 ? props.listTheme
                                 : props.mainTheme};
@@ -281,13 +256,7 @@ const Pagination = (props: PaginationProps) => {
                                 aria-hidden="true"
                                 css={css`
                                     display: hidden;
-                                    justify-content: center;
-                                    align-items: center;
-                                    border: 0.2rem solid ${props.listTheme};
-                                    width: 2.5rem;
-                                    height: 3rem;
-                                    border-radius: 0.5rem;
-                                    cursor: pointer;
+                                    ${generalPaginationCSS}
                                     background: ${active === startArrayNumber
                                         ? props.listTheme
                                         : props.mainTheme};
@@ -317,14 +286,8 @@ const Pagination = (props: PaginationProps) => {
                         aria-hidden="true"
                         css={css`
                             display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            border: 0.2rem solid ${props.listTheme};
-                            width: 2.5rem;
-                            height: 3rem;
-                            border-radius: 0.5rem;
+                            ${generalPaginationCSS}
                             margin-left: 1rem;
-                            cursor: pointer;
                         `}
                         onClick={() => {
                             onClickHandler(active + 1);
@@ -338,14 +301,8 @@ const Pagination = (props: PaginationProps) => {
                     <div
                         css={css`
                             display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            border: 0.2rem solid ${props.listTheme};
-                            width: 2.5rem;
-                            height: 3rem;
-                            border-radius: 0.5rem;
+                            ${generalPaginationCSS}
                             margin-left: 1rem;
-                            cursor: pointer;
                         `}
                         aria-disabled
                     >
@@ -363,18 +320,13 @@ const Pagination = (props: PaginationProps) => {
                         ${mediaFrom(breakpoints.lg)} {
                             display: flex;
                         }
-                        justify-content: center;
-                        align-items: center;
-                        border: 0.2rem solid ${props.listTheme};
-                        width: 2.5rem;
-                        height: 3rem;
-                        border-radius: 0.5rem;
+                        ${generalPaginationCSS}
                         margin-left: 1rem;
-                        cursor: pointer;
                     `}
                     onClick={() => {
                         onClickHandler(size);
                     }}
+                    data-testid="double-arrow-right-btn"
                 >
                     <Icon.KeyboardDoubleArrowRight
                         sx={{ color: props.listTheme }}

@@ -27,14 +27,23 @@ const CardDetail = ({ data, url, typeBtn = false }: CardDetailInterface) => {
     const route = useRouter();
     return (
         <Grid2 container sx={{ alignItems: "center", padding: "5rem 0" }}>
-            <Grid2 size={4} sx={{ paddingRight: "1rem" }}>
-                <Image
-                    src={data.sprites.other["official-artwork"].front_default}
-                    height="0"
-                    width="0"
-                    sizes="100%"
-                    alt="Poke-Rey-Detail"
-                />
+            <Grid2 size={4} sx={{ paddingRight: "1.5rem" }}>
+                <div
+                    css={css`
+                        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+                        border-radius: 1rem;
+                    `}
+                >
+                    <Image
+                        src={
+                            data.sprites.other["official-artwork"].front_default
+                        }
+                        height="0"
+                        width="0"
+                        sizes="100%"
+                        alt="Poke-Rey-Detail"
+                    />
+                </div>
             </Grid2>
             <Grid2 size={8}>
                 <Typography
