@@ -89,7 +89,7 @@ const PokemonTypePage = ({
     const handleChangePerPage = async (v: number) => {
         resetPerPage();
         setPerPage(v);
-        setTotalPages(pokemon.length / v);
+        setTotalPages(Math.floor(pokemon.length / v));
         setFilteredPokeType(pokemon.slice(0, v));
         scrollToDynamicView("pokemon-type");
     };
