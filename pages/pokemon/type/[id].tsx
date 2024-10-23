@@ -5,7 +5,7 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetServerSideProps } from "next";
 import baseApi from "@utils/api";
 import { PokemonTypeName, PokeType } from "src/types/poke-type";
 import { dataFilter } from "src/types/data-filter";
@@ -394,46 +394,7 @@ const PokemonTypePage = ({
     );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-    return {
-        paths: [],
-        fallback: "blocking",
-    };
-    // const api = await baseApi(process.env.NEXT_PUBLIC_API_URL);
-
-    // try {
-    //     const apiResponse = await api.get("type");
-    //     let pokeTypePaths: SlugInfo[] = (
-    //         apiResponse.data.results as Species[]
-    //     ).map((v) => {
-    //         return {
-    //             params: { handle: "/", id: v.name.toString() },
-    //             locale: "id",
-    //         };
-    //     });
-    //     pokeTypePaths = pokeTypePaths.concat(
-    //         (apiResponse.data.results as Species[]).map((v) => {
-    //             return {
-    //                 params: { handle: "/", id: v.name.toString() },
-    //                 locale: "en",
-    //             };
-    //         }),
-    //     );
-    //     return {
-    //         paths: pokeTypePaths,
-    //         fallback: "blocking",
-    //     };
-    // } catch (error) {
-    //     console.error("Failed to get slugs:", error);
-
-    //     return {
-    //         paths: [],
-    //         fallback: true,
-    //     };
-    // }
-};
-
-export const getStaticProps: GetStaticProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const api = await baseApi(process.env.NEXT_PUBLIC_API_URL);
 
     try {
@@ -469,7 +430,6 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
                 pokemon: pokeType.pokemon,
                 pokeChannel: apiTypeResponse.data.results as Species[],
             },
-            revalidate: 3600,
         };
     } catch (error) {
         console.error("Error fetching Pokémon Type List:", error);

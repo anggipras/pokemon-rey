@@ -4,7 +4,7 @@ import CardDetail from "@components/modules/card-detail";
 import { muiColor } from "@helpers/styles";
 import { Container, Typography } from "@mui/material";
 import baseApi from "@utils/api";
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import {
@@ -231,46 +231,7 @@ const PokemonDetail = ({
     );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-    return {
-        paths: [],
-        fallback: "blocking",
-    };
-    // const api = await baseApi(process.env.NEXT_PUBLIC_API_URL);
-
-    // try {
-    //     const apiResponse = await api.get("pokemon/?limit=2000");
-    //     let pokeDetailPaths: SlugInfo[] = (
-    //         apiResponse.data.results as Species[]
-    //     ).map((v) => {
-    //         return {
-    //             params: { handle: "/", id: splitPokeUrl(v.url) },
-    //             locale: "id",
-    //         };
-    //     });
-    //     pokeDetailPaths = pokeDetailPaths.concat(
-    //         (apiResponse.data.results as Species[]).map((v) => {
-    //             return {
-    //                 params: { handle: "/", id: splitPokeUrl(v.url) },
-    //                 locale: "en",
-    //             };
-    //         }),
-    //     );
-    //     return {
-    //         paths: pokeDetailPaths,
-    //         fallback: "blocking",
-    //     };
-    // } catch (error) {
-    //     console.error("Failed to get slugs:", error);
-
-    //     return {
-    //         paths: [],
-    //         fallback: true,
-    //     };
-    // }
-};
-
-export const getStaticProps: GetStaticProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const api = await baseApi(process.env.NEXT_PUBLIC_API_URL);
 
     try {
@@ -318,7 +279,6 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
                 speciesEvoPoke: evolvedPokemonSpecies as UsedPokeDetail[],
                 pokeId: evolvedPokeArr,
             },
-            revalidate: 3600,
         };
     } catch (error) {
         console.error("Error fetching Pokémon Detail:", error);
