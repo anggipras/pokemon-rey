@@ -12,8 +12,8 @@ import { dataFilter } from "src/types/data-filter";
 import { PokeTypeColor, Species, Sprites, TypePoke } from "src/types/pokemon";
 import Image from "next/image";
 import { muiColor } from "@helpers/styles";
-import { Container, Typography } from "@mui/material";
-import { EmotionGrid } from "@components/emotion-components";
+import { Container, Popover, Typography } from "@mui/material";
+import { EmotionGrid, generalCenter } from "@components/emotion-components";
 import TypoButton from "@components/modules/typo-bar";
 import { css } from "@emotion/react";
 import { useRouter } from "next/router";
@@ -22,6 +22,9 @@ import { ROUTES_PATH } from "@constants/config";
 import { capitalizeFirstLetter, splitPokeUrl } from "@utils/custom-function";
 import Pagination from "@components/modules/pagination";
 import { useState } from "react";
+import Icon from "@constants/icons";
+import usePagination from "@helpers/usePagination";
+import { scrollToDynamicView } from "@utils/browser-behaviour";
 
 export interface SlugInfo {
     params: { handle: string; id: string };
@@ -63,8 +66,15 @@ const PokemonTypePage = ({
     const [filteredPokeType, setFilteredPokeType] = useState<
         PokemonTypeWithDetail[]
     >(pokemon.filter((_, idx) => idx < 9));
-    const [activePage, setActivePage] = useState(1);
-    const [perPage, setPerPage] = useState<number>(9);
+    const {
+        anchorEl,
+        setAnchorEl,
+        activePage,
+        setActivePage,
+        resetPerPage,
+        perPage,
+        setPerPage,
+    } = usePagination({ itemsPerPage: 9 });
     const [totalPages, setTotalPages] = useState<number>(
         Math.floor(pokemon.length / perPage),
     );
@@ -76,10 +86,19 @@ const PokemonTypePage = ({
         setFilteredPokeType(pokemon.slice(startIndex, endIndex));
     };
 
+    const handleChangePerPage = async (v: number) => {
+        resetPerPage();
+        setPerPage(v);
+        setTotalPages(pokemon.length / v);
+        setFilteredPokeType(pokemon.slice(0, v));
+        scrollToDynamicView("pokemon-type");
+    };
+
     return (
         <>
             <Head>{capitalizeFirstLetter(name)} - Pokemon Type</Head>
             <div
+                id="pokemon-type"
                 css={css`
                     position: absolute;
                     top: 90vh;
@@ -287,11 +306,68 @@ const PokemonTypePage = ({
                     >
                         <div
                             css={css`
-                                color: ${PokeTypeColor[id]};
+                                ${generalCenter}
                                 width: 100%;
+                                color: ${PokeTypeColor[id]};
+                                margin-right: 0.5rem;
                             `}
                         >
-                            {t("common:pagination.page")}: {perPage}
+                            <div
+                                css={css`
+                                    color: ${PokeTypeColor[id]};
+                                    width: 100%;
+                                `}
+                            >
+                                {t("common:pagination.page")}
+                            </div>
+                            <button
+                                css={css`
+                                    ${generalCenter}
+                                    border: 0.2rem solid ${PokeTypeColor[id]};
+                                    border-radius: 0.5rem;
+                                    padding: 0.5rem;
+                                    margin-left: 0.2rem;
+                                    cursor: pointer;
+                                    color: ${PokeTypeColor[id]};
+                                    background-color: transparent;
+                                `}
+                                onClick={(event) =>
+                                    setAnchorEl(event.currentTarget)
+                                }
+                            >
+                                <Typography variant="h6">{perPage}</Typography>
+                                <Icon.KeyboardArrowDown
+                                    sx={{ marginLeft: "0.5rem" }}
+                                />
+                            </button>
+                            <Popover
+                                id={anchorEl ? "simple-popover" : undefined}
+                                open={Boolean(anchorEl)}
+                                anchorEl={anchorEl}
+                                onClose={() => setAnchorEl(null)}
+                                anchorOrigin={{
+                                    vertical: "top",
+                                    horizontal: "right",
+                                }}
+                            >
+                                {[3, 6, 9].map((v, idx) => (
+                                    <div
+                                        key={`paginate-${idx}`}
+                                        css={css`
+                                            padding: 0.5rem 1.5rem;
+                                            cursor: pointer;
+                                            &:hover {
+                                                background-color: ${PokeTypeColor[
+                                                    id
+                                                ]};
+                                            }
+                                        `}
+                                        onClick={() => handleChangePerPage(v)}
+                                    >
+                                        {v}
+                                    </div>
+                                ))}
+                            </Popover>
                         </div>
                         <Pagination
                             listTheme={PokeTypeColor[id]}

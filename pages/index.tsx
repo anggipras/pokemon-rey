@@ -14,10 +14,14 @@ import {
     TypePoke,
 } from "src/types/pokemon";
 import { dataFilter } from "src/types/data-filter";
-import { Container, Typography } from "@mui/material";
+import { Container, Popover, Typography } from "@mui/material";
 import baseApi from "@utils/api";
 import { splitPokeUrl } from "@utils/custom-function";
 import { css } from "@emotion/react";
+import Icon from "@constants/icons";
+import { generalCenter } from "@components/emotion-components";
+import usePagination from "@helpers/usePagination";
+import { scrollToDynamicView } from "@utils/browser-behaviour";
 
 interface Pokemon {
     name: string;
@@ -48,21 +52,26 @@ const Index = ({
     initialOffset,
 }: PokemonListProps) => {
     const { t } = useTranslation();
+    const {
+        anchorEl,
+        setAnchorEl,
+        activePage,
+        setActivePage,
+        resetPerPage,
+        perPage,
+        setPerPage,
+    } = usePagination({ itemsPerPage: 9 });
     const [pokemons, setPokemons] = useState<Pokemon[]>(initialPokemons);
     const [offset, setOffset] = useState<number>(initialOffset);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [activePage, setActivePage] = useState(1);
-    const [perPage, setPerPage] = useState<number>(9);
     const [totalPages, setTotalPages] = useState<number>(
         Math.floor(countedPokemons / perPage),
     );
 
-    const fetchPokemons = async (newOffset: number) => {
-        setLoading(true);
+    const fetchPokemons = async (newLimit: number, newOffset: number) => {
         try {
             const api = await baseApi(process.env.NEXT_PUBLIC_API_URL);
             const response = await api.get(
-                `/pokemon?limit=${perPage}&offset=${newOffset}`,
+                `/pokemon?limit=${newLimit}&offset=${newOffset}`,
             );
             let initialPokemons = response.data.results;
             initialPokemons = await Promise.all(
@@ -73,17 +82,26 @@ const Index = ({
                 }),
             );
             setPokemons(initialPokemons);
+            setPerPage(newLimit);
             setOffset(newOffset);
+            setTotalPages(Math.floor(countedPokemons / newLimit));
         } catch (error) {
             console.error("Error fetching Pokémon list:", error);
-        } finally {
-            setLoading(false);
         }
     };
 
     const activePageHandler = async (clickedActivePage: string) => {
         setActivePage(parseInt(clickedActivePage));
-        await fetchPokemons((parseInt(clickedActivePage) - 1) * perPage);
+        await fetchPokemons(
+            perPage,
+            (parseInt(clickedActivePage) - 1) * perPage,
+        );
+    };
+
+    const handleChangePerPage = async (v: number) => {
+        resetPerPage();
+        await fetchPokemons(v, 0);
+        scrollToDynamicView("pokedex");
     };
 
     return (
@@ -150,15 +168,65 @@ const Index = ({
                             width: 100%;
                         `}
                     >
-                        <Typography
-                            variant="h6"
+                        <div
                             css={css`
-                                color: white;
+                                ${generalCenter}
                                 width: 100%;
+                                color: white;
                             `}
                         >
-                            {t("common:pagination.page")}: {perPage}
-                        </Typography>
+                            <Typography variant="h6">
+                                {t("common:pagination.page")}:
+                            </Typography>
+                            <button
+                                css={css`
+                                    ${generalCenter}
+                                    border: 0.2rem solid white;
+                                    border-radius: 0.5rem;
+                                    padding: 0.5rem;
+                                    margin-left: 1rem;
+                                    cursor: pointer;
+                                    color: white;
+                                    background-color: transparent;
+                                `}
+                                onClick={(event) =>
+                                    setAnchorEl(event.currentTarget)
+                                }
+                            >
+                                <Typography variant="h6">{perPage}</Typography>
+                                <Icon.KeyboardArrowDown
+                                    sx={{ marginLeft: "0.5rem" }}
+                                />
+                            </button>
+                            <Popover
+                                id={anchorEl ? "simple-popover" : undefined}
+                                open={Boolean(anchorEl)}
+                                anchorEl={anchorEl}
+                                onClose={() => setAnchorEl(null)}
+                                anchorOrigin={{
+                                    vertical: "top",
+                                    horizontal: "right",
+                                }}
+                            >
+                                {[3, 6, 9].map((v, idx) => (
+                                    <div
+                                        key={`paginate-${idx}`}
+                                        css={css`
+                                            padding: 0.5rem 1.5rem;
+                                            cursor: pointer;
+                                            &:hover {
+                                                background-color: ${muiColor(
+                                                    500,
+                                                ).amber};
+                                            }
+                                        `}
+                                        onClick={() => handleChangePerPage(v)}
+                                    >
+                                        {v}
+                                    </div>
+                                ))}
+                            </Popover>
+                        </div>
                         <Pagination
                             listTheme="#ffffff"
                             mainTheme={muiColor(300).amber}

@@ -53,3 +53,9 @@ export const primaryButton = css`
     font-weight: bold;
     text-transform: none;
 `;
+
+export const generalCenter = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
