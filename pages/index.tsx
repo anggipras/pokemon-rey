@@ -1,13 +1,11 @@
 import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
+import { GetStaticProps } from "next";
 import Head from "next/head";
-import { Container, Typography } from "@mui/material";
 import HeroBg from "@components/modules/hero-bg";
 import PokeCard from "@components/modules/card";
+import Pagination from "@components/modules/pagination";
 import { muiColor } from "@helpers/styles";
-import { css } from "@emotion/react";
-import baseApi from "@utils/api";
-import { GetStaticProps } from "next";
 import {
     Ability,
     PokemonType,
@@ -15,9 +13,11 @@ import {
     Sprites,
     TypePoke,
 } from "src/types/pokemon";
-import { splitPokeUrl } from "@utils/custom-function";
-import Pagination from "@components/modules/pagination";
 import { dataFilter } from "src/types/data-filter";
+import { Container, Typography } from "@mui/material";
+import baseApi from "@utils/api";
+import { splitPokeUrl } from "@utils/custom-function";
+import { css } from "@emotion/react";
 
 interface Pokemon {
     name: string;
@@ -27,7 +27,7 @@ interface Pokemon {
 
 interface PokemonListProps {
     countedPokemons: number;
-    initialPokemons: Pokemon[];
+    initialPokemons?: Pokemon[];
     initialOffset: number;
 }
 
@@ -56,14 +56,6 @@ const Index = ({
     const [totalPages, setTotalPages] = useState<number>(
         Math.floor(countedPokemons / perPage),
     );
-
-    const tempRequirements = [
-        { desc: "requirement-desc-1", action: null },
-        { desc: "requirement-desc-2", action: "change-language" },
-        { desc: "requirement-desc-3", action: null },
-        { desc: "requirement-desc-4", action: null },
-        { desc: "requirement-desc-5", action: null },
-    ];
 
     const fetchPokemons = async (newOffset: number) => {
         setLoading(true);
@@ -232,11 +224,11 @@ export const getStaticProps: GetStaticProps = async () => {
             revalidate: 3600,
         };
     } catch (error) {
-        console.error("Error fetching Pokémon list:", error);
-
         return {
             props: {
-                pokemons: [],
+                countedPokemons: 0,
+                initialPokemons: [],
+                initialOffset: 0,
             },
         };
     }

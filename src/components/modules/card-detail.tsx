@@ -147,6 +147,7 @@ const CardDetail = ({ data, url, typeBtn = false }: CardDetailInterface) => {
                                 ROUTES_PATH.pokemon_detail(splitPokeUrl(url)),
                             )
                         }
+                        data-testid="card-detail-btn"
                     >
                         {t("common:card-detail.btn")}
                     </Button>

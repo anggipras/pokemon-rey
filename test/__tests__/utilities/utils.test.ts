@@ -1,4 +1,4 @@
-import { scrollToDynamicView } from "../../src/utils/browser-behaviour";
+import { scrollToDynamicView } from "../../../src/utils/browser-behaviour";
 
 describe("scrollToDynamicView", () => {
     beforeEach(() => {

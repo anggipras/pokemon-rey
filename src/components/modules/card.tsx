@@ -7,6 +7,7 @@ import TypoButton from "./typo-bar";
 import { EmotionBoxModal, EmotionGrid } from "@components/emotion-components";
 import { PokemonType } from "src/types/pokemon";
 import CardDetail from "./card-detail";
+import { splitPokeUrl } from "@utils/custom-function";
 
 const PokeCard = ({ data, url }: { data: PokemonType; url: string }) => {
     const [open, setOpen] = useState<boolean>(false);
@@ -25,6 +26,7 @@ const PokeCard = ({ data, url }: { data: PokemonType; url: string }) => {
                     }
                 `}
                 onClick={() => setOpen(true)}
+                data-testid={`poke-card-${splitPokeUrl(url)}`}
             >
                 <Image
                     src={data.sprites.other["official-artwork"].front_default}
