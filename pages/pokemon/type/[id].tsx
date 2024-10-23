@@ -65,7 +65,7 @@ const PokemonTypePage = ({
     const route = useRouter();
     const [filteredPokeType, setFilteredPokeType] = useState<
         PokemonTypeWithDetail[]
-    >(pokemon.filter((_, idx) => idx < 9));
+    >(pokemon && pokemon.length && pokemon.filter((_, idx) => idx < 9));
     const {
         anchorEl,
         setAnchorEl,
@@ -405,7 +405,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
         pokeType.pokemon = await Promise.all(
             pokeType.pokemon.map(async (poke: PokemonTypeName) => {
-                const id = poke.pokemon.url.split("/").filter(Boolean).pop();
+                const id = poke.pokemon.url.split("/")?.filter(Boolean).pop();
                 const detailPokemon = await api.get(`/pokemon/${id}`);
                 const pokeDetailDtKey: (keyof UsedPokeDetail)[] = [
                     "id",
