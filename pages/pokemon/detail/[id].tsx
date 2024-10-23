@@ -232,38 +232,42 @@ const PokemonDetail = ({
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    const api = await baseApi(process.env.NEXT_PUBLIC_API_URL);
+    return {
+        paths: [],
+        fallback: "blocking",
+    };
+    // const api = await baseApi(process.env.NEXT_PUBLIC_API_URL);
 
-    try {
-        const apiResponse = await api.get("pokemon/?limit=2000");
-        let pokeDetailPaths: SlugInfo[] = (
-            apiResponse.data.results as Species[]
-        ).map((v) => {
-            return {
-                params: { handle: "/", id: splitPokeUrl(v.url) },
-                locale: "id",
-            };
-        });
-        pokeDetailPaths = pokeDetailPaths.concat(
-            (apiResponse.data.results as Species[]).map((v) => {
-                return {
-                    params: { handle: "/", id: splitPokeUrl(v.url) },
-                    locale: "en",
-                };
-            }),
-        );
-        return {
-            paths: pokeDetailPaths,
-            fallback: "blocking",
-        };
-    } catch (error) {
-        console.error("Failed to get slugs:", error);
+    // try {
+    //     const apiResponse = await api.get("pokemon/?limit=2000");
+    //     let pokeDetailPaths: SlugInfo[] = (
+    //         apiResponse.data.results as Species[]
+    //     ).map((v) => {
+    //         return {
+    //             params: { handle: "/", id: splitPokeUrl(v.url) },
+    //             locale: "id",
+    //         };
+    //     });
+    //     pokeDetailPaths = pokeDetailPaths.concat(
+    //         (apiResponse.data.results as Species[]).map((v) => {
+    //             return {
+    //                 params: { handle: "/", id: splitPokeUrl(v.url) },
+    //                 locale: "en",
+    //             };
+    //         }),
+    //     );
+    //     return {
+    //         paths: pokeDetailPaths,
+    //         fallback: "blocking",
+    //     };
+    // } catch (error) {
+    //     console.error("Failed to get slugs:", error);
 
-        return {
-            paths: [],
-            fallback: true,
-        };
-    }
+    //     return {
+    //         paths: [],
+    //         fallback: true,
+    //     };
+    // }
 };
 
 export const getStaticProps: GetStaticProps = async (ctx) => {

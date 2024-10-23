@@ -395,38 +395,42 @@ const PokemonTypePage = ({
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    const api = await baseApi(process.env.NEXT_PUBLIC_API_URL);
+    return {
+        paths: [],
+        fallback: "blocking",
+    };
+    // const api = await baseApi(process.env.NEXT_PUBLIC_API_URL);
 
-    try {
-        const apiResponse = await api.get("type");
-        let pokeTypePaths: SlugInfo[] = (
-            apiResponse.data.results as Species[]
-        ).map((v) => {
-            return {
-                params: { handle: "/", id: v.name.toString() },
-                locale: "id",
-            };
-        });
-        pokeTypePaths = pokeTypePaths.concat(
-            (apiResponse.data.results as Species[]).map((v) => {
-                return {
-                    params: { handle: "/", id: v.name.toString() },
-                    locale: "en",
-                };
-            }),
-        );
-        return {
-            paths: pokeTypePaths,
-            fallback: "blocking",
-        };
-    } catch (error) {
-        console.error("Failed to get slugs:", error);
+    // try {
+    //     const apiResponse = await api.get("type");
+    //     let pokeTypePaths: SlugInfo[] = (
+    //         apiResponse.data.results as Species[]
+    //     ).map((v) => {
+    //         return {
+    //             params: { handle: "/", id: v.name.toString() },
+    //             locale: "id",
+    //         };
+    //     });
+    //     pokeTypePaths = pokeTypePaths.concat(
+    //         (apiResponse.data.results as Species[]).map((v) => {
+    //             return {
+    //                 params: { handle: "/", id: v.name.toString() },
+    //                 locale: "en",
+    //             };
+    //         }),
+    //     );
+    //     return {
+    //         paths: pokeTypePaths,
+    //         fallback: "blocking",
+    //     };
+    // } catch (error) {
+    //     console.error("Failed to get slugs:", error);
 
-        return {
-            paths: [],
-            fallback: true,
-        };
-    }
+    //     return {
+    //         paths: [],
+    //         fallback: true,
+    //     };
+    // }
 };
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
