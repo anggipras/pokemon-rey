@@ -1,4 +1,25 @@
 {
     "language-id": "Bahasa Indonesia",
-    "language-en": "English"
+    "language-en": "English",
+    "pagination": {
+        "page": "Per Page",
+        "total": "Total Data"
+    },
+    "poke-detail": {
+        "img": "Other Images",
+        "stat": "Stats",
+        "evo": "Evolution"
+    },
+    "poke-type": {
+        "title": "Pokemon with Type",
+        "sidebar": "Pokemon Type"
+    },
+    "card-detail": {
+        "btn": "More Detail",
+        "type": "Type",
+        "ab": "Abilities",
+        "height": "Height",
+        "width": "Width",
+        "hidden": "(hidden)"
+    }
 }

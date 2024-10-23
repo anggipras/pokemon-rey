@@ -1,4 +1,25 @@
 {
     "language-id": "Bahasa Indonesia",
-    "language-en": "English"
+    "language-en": "English",
+    "pagination": {
+        "page": "Per Halaman",
+        "total": "Jumlah Data"
+    },
+    "poke-detail": {
+        "img": "Gambar Lainnya",
+        "stat": "Statistik",
+        "evo": "Evolusi"
+    },
+    "poke-type": {
+        "title": "Pokemon dengan Tipe",
+        "sidebar": "Tipe Pokemon"
+    },
+    "card-detail": {
+        "btn": "Lihat Detail",
+        "type": "Tipe",
+        "ab": "Kemampuan",
+        "height": "Tinggi",
+        "width": "Lebar",
+        "hidden": "(tersembunyi)"
+    }
 }

@@ -6,7 +6,7 @@
     },
     "extends": [
         "eslint:recommended",
-        "next", 
+        "next",
         "prettier",
         "plugin:cypress/recommended"
     ],
@@ -24,6 +24,7 @@
         "import/no-anonymous-default-export": "off",
         "react-hooks/exhaustive-deps": "off",
         "react-hooks/rules-of-hooks": "off",
-        "@next/next/link-passhref": "off"
+        "@next/next/link-passhref": "off",
+        "react/no-unknown-property": "off"
     }
 }
